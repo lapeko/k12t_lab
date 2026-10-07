@@ -1,7 +1,6 @@
-- hosts: localhost
+- hosts: k8s_clusters
   gather_facts: false
   tasks:
-    - name: Install Cilium on Kind clusters
+    - name: Install Cilium CNI on cluster
       ansible.builtin.command:
-        cmd: "cilium install --context {{ item }}"
-      loop: "{{ clusters }}"
+        cmd: "cilium install --context {{ k8s_context }}"
