@@ -1,0 +1,7 @@
+- hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Install Cilium on Kind clusters
+      ansible.builtin.command:
+        cmd: "cilium install --context {{ item }}"
+      loop: "{{ clusters }}"
