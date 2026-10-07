@@ -1,0 +1,10 @@
+resources:
+  - ../../base
+namespace: nginx
+patches:
+  - patch: |
+      spec:
+        replicas: 2
+    target:
+      kind: Deployment
+      name: nginx
