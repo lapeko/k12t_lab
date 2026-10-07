@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: subscriptions
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - env: stage
+            prefix: "stage-"
+          - env: prod
+            prefix: ""
+  template:
+    metadata:
+      name: "{{.prefix}}subscriptions"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/lapeko/k12t_lab.git
+        targetRevision: HEAD
+        path: apps/subscriptions/k8s/overlays/{{.env}}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{.prefix}}subscriptions"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

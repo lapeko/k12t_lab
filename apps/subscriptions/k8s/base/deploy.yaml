@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriptions
+  labels:
+    app: subscriptions
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subscriptions
+  template:
+    metadata:
+      labels:
+        app: subscriptions
+    spec:
+      containers:
+        - image: subscriptions
+          name: subscriptions
