@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: subscriptions
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lapeko/k12t_lab.git
+    targetRevision: HEAD
+    path: apps/subscriptions/k8s/base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: subscriptions
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-dev-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lapeko/k12t_lab.git
+    targetRevision: HEAD
+    path: argocd/dev-apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
