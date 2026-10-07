@@ -24,3 +24,7 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: "{{.prefix}}nginx"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
