@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/lapeko/k12t_lab.git
     targetRevision: HEAD
-    path: apps/subscriptions/k8s/base
+    path: apps/subscriptions/k8s/overlays/dev
   destination:
     server: https://kubernetes.default.svc
     namespace: subscriptions
