@@ -1,10 +1,8 @@
 resources:
-- ../../base
-namePrefix: dev-
-namespace: dev-subscriptions
+  - ../../base
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- name: lapeko/subscriptions
-  newName: lapeko/subscriptions
-  newTag: sha-242d054
+  - name: lapeko/subscriptions
+    newName: lapeko/subscriptions
+    newTag: sha-242d054
