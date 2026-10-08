@@ -1,4 +1,5 @@
 resources:
   - ../../base
-  - deploy.yaml
 namespace: subscriptions
+patches:
+  - path: deploy.yaml
