@@ -16,4 +16,4 @@ spec:
     spec:
       containers:
         - name: subscriptions
-          image: lapeko/subscriptions
+          image: lapeko/subscriptions:0.0.1
