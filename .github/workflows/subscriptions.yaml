@@ -1,4 +1,4 @@
-name: Subscriptions PR Check
+name: Subscriptions PR CICD
 
 on:
   pull_request:
@@ -47,7 +47,7 @@ jobs:
           echo "NEW_IMAGE=${{ vars.DOCKERHUB_USERNAME }}/${APP}:sha-${SHORT_SHA}" >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: apps/${{ env.APP }}
           file: apps/${{ env.APP }}/Dockerfile
