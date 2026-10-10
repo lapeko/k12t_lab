@@ -76,8 +76,8 @@ jobs:
 
       - name: Update Manifest and Commit
         run: |
+          git fetch origin main:main
           git checkout main
-          git pull origin main
 
           cd apps/subscriptions/k8s/overlays/stage
           kustomize edit set image ${{ vars.DOCKERHUB_USERNAME }}/subscriptions=${{ env.NEW_IMAGE }}
@@ -127,8 +127,8 @@ jobs:
 
       - name: Update Prod Manifest and Commit
         run: |
+          git fetch origin main:main
           git checkout main
-          git pull origin main
 
           cd apps/subscriptions/k8s/overlays/prod
           kustomize edit set image ${{ vars.DOCKERHUB_USERNAME }}/subscriptions=${{ env.NEW_IMAGE }}
