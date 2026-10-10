@@ -1,4 +1,4 @@
-name: Dev Deploy
+name: Dev Pipeline
 
 on:
   workflow_dispatch:

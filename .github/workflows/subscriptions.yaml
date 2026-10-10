@@ -1,4 +1,4 @@
-name: Subscriptions
+name: Subscriptions Pipeline
 
 on:
   pull_request:
@@ -6,9 +6,17 @@ on:
       - main
     paths:
       - "apps/subscriptions/**"
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+    paths:
+      - "apps/subscriptions/**"
 
 jobs:
-  validate-and-test:
+  pr-checks:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -29,6 +37,15 @@ jobs:
           cd apps/subscriptions
           go test -v ./...
 
+  deploy-stage:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
@@ -41,18 +58,16 @@ jobs:
       - name: Set Envs
         run: |
           SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          APP=subscriptions
           echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
-          echo "APP=${APP}" >> $GITHUB_ENV
-          echo "NEW_IMAGE=${{ vars.DOCKERHUB_USERNAME }}/${APP}:sha-${SHORT_SHA}" >> $GITHUB_ENV
+          echo "NEW_IMAGE=${{ vars.DOCKERHUB_USERNAME }}/subscriptions:sha-${SHORT_SHA}" >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v7
         with:
-          context: apps/${{ env.APP }}
-          file: apps/${{ env.APP }}/Dockerfile
+          context: apps/subscriptions
+          file: apps/subscriptions/Dockerfile
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ env.APP }}:sha-${{ env.SHORT_SHA }}
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/subscriptions:sha-${{ env.SHORT_SHA }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -61,11 +76,59 @@ jobs:
 
       - name: Update Manifest and Commit
         run: |
-          cd apps/${{ env.APP }}/k8s/overlays/dev
-          kustomize edit set image ${{ vars.DOCKERHUB_USERNAME }}/${{ env.APP }}=${{ env.NEW_IMAGE }}
+          cd apps/subscriptions/k8s/overlays/stage
+          kustomize edit set image ${{ vars.DOCKERHUB_USERNAME }}/subscriptions=${{ env.NEW_IMAGE }}
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add kustomization.yaml
-          git commit -m "chore(dev): update ${{ env.APP }} image to sha-${{ env.SHORT_SHA }} [skip ci]"
+          git commit -m "chore(stage): update subscriptions image to sha-${{ env.SHORT_SHA }} [skip ci]"
+          git push
+
+  deploy-prod:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set Envs
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+          echo "NEW_IMAGE=${{ vars.DOCKERHUB_USERNAME }}/subscriptions:${TAG_NAME}" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v7
+        with:
+          context: apps/subscriptions
+          file: apps/subscriptions/Dockerfile
+          push: true
+          tags: ${{ env.NEW_IMAGE }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v3
+
+      - name: Update Prod Manifest and Commit
+        run: |
+          cd apps/subscriptions/k8s/overlays/prod
+          kustomize edit set image ${{ vars.DOCKERHUB_USERNAME }}/subscriptions=${{ env.NEW_IMAGE }}
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add kustomization.yaml
+          git commit -m "chore(prod): release subscriptions ${TAG_NAME} [skip ci]"
           git push
