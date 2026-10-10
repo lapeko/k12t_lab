@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: lapeko/subscriptions
   newName: lapeko/subscriptions
-  newTag: sha-9de4df8
+  newTag: sha-711bcd6
