@@ -65,7 +65,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: apps/subscriptions
-          file: app/subscriptions/Dockerfile
+          file: apps/subscriptions/Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/subscriptions:sha-${{ env.SHORT_SHA }}
           cache-from: type=gha
