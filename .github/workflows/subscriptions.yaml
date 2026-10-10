@@ -76,13 +76,13 @@ jobs:
 
       - name: Update Manifest and Commit
         run: |
-          cd apps/subscriptions/k8s/overlays/dev
+          cd apps/subscriptions/k8s/overlays/stage
           kustomize edit set image ${{ vars.DOCKERHUB_USERNAME }}/subscriptions=${{ env.NEW_IMAGE }}
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add kustomization.yaml
-          git commit -m "chore(dev): update subscriptions image to sha-${{ env.SHORT_SHA }} [skip ci]"
+          git commit -m "chore(stage): update subscriptions image to sha-${{ env.SHORT_SHA }} [skip ci]"
           git push
 
   deploy-prod:
