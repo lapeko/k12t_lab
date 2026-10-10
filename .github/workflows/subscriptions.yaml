@@ -29,12 +29,12 @@ jobs:
 
       - name: Run Go Vet (Linter)
         run: |
-          cd apps/subscriptions
+          cd apps/subscriptions/src
           go vet ./...
 
       - name: Run Unit Tests
         run: |
-          cd apps/subscriptions
+          cd apps/subscriptions/src
           go test -v ./...
 
   deploy-stage:
