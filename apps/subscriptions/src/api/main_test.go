@@ -19,7 +19,7 @@ func TestSetup_RootEndpoint(t *testing.T) {
 		t.Errorf("expected status %d, got %d", http.StatusOK, rr.Code)
 	}
 
-	expectedBody := "Hello World!"
+	expectedBody := "Hello World"
 	if rr.Body.String() != expectedBody {
 		t.Errorf("expected body %q, got %q", expectedBody, rr.Body.String())
 	}
