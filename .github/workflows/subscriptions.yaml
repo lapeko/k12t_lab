@@ -1,4 +1,4 @@
-name: Subscriptions PR
+name: Subscriptions
 
 on:
   pull_request:
