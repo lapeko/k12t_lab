@@ -24,7 +24,7 @@ func New() Api {
 
 func (a *api) Setup() {
 	a.r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World!"))
+		w.Write([]byte("Hello World 123"))
 	})
 }
 
