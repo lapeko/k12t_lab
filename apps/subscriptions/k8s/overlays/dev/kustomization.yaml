@@ -1,8 +1,10 @@
 resources:
-- ../../base
+  - ../../base
+patches:
+  - path: db/sealed-secret.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- name: lapeko/subscriptions
-  newName: lapeko/subscriptions
-  newTag: sha-711bcd6
+  - name: lapeko/subscriptions
+    newName: lapeko/subscriptions
+    newTag: sha-711bcd6

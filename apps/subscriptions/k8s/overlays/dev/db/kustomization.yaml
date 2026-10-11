@@ -1,0 +1,2 @@
+patches:
+  - path: sealed-secret.yaml
