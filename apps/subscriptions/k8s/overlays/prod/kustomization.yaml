@@ -1,5 +1,6 @@
 resources:
   - ../../base
+components:
   - app/
   - db/
 namespace: subscriptions
