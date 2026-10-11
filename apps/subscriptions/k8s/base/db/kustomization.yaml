@@ -1,4 +1,4 @@
 resources:
-  # - sts.yaml
-  # - svc.yaml
+  - sts.yaml
+  - svc.yaml
   - sealed-secret.yaml
