@@ -2,3 +2,5 @@ resources:
   - sts.yaml
   - svc.yaml
   - sealed-secret.yaml
+commonAnnotations:
+  argocd.argoproj.io/hook: PreSync
