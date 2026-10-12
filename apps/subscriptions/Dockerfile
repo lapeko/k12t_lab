@@ -14,6 +14,10 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
     -o /app/bin/api \
     ./cmd/api/main.go
 
+RUN CGO_ENABLED=0 GOOS=linux go build \
+    -ldflags="-w -s" \
+    -o /app/bin/migrator \
+    ./cmd/migrator/main.go
 
 FROM scratch
 
@@ -25,6 +29,7 @@ USER 10001:10001
 WORKDIR /app
 
 COPY --from=builder /app/bin/api /app/api
+COPY --from=builder /app/bin/migrator /app/migrator
 
 EXPOSE 3000
 
