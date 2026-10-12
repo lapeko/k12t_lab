@@ -23,12 +23,12 @@ spec:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
+                  name: postgres
                   key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
+                  name: postgres
                   key: password
             - name: DATABASE_URL
               value: "postgres://$(DB_USER):$(DB_PASSWORD)@postgres:5432/subscriptions?sslmode=disable"

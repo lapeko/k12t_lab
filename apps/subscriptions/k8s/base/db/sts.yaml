@@ -25,12 +25,12 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
+                  name: postgres
                   key: username
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
+                  name: postgres
                   key: password
             - name: PGDATA
               value: "/var/lib/postgresql/data/pgdata"
