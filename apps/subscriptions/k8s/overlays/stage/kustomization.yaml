@@ -1,7 +1,13 @@
 resources:
-  - ../../base
+- ../../base
 components:
-  - app/
-  - db/
+- app/
+- db/
 namePrefix: stage-
 namespace: stage-subscriptions
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: lapeko/subscriptions
+  newName: lapeko/subscriptions
+  newTag: sha-c58a396
