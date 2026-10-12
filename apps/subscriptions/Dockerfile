@@ -17,7 +17,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -ldflags="-w -s" \
     -o /app/bin/migrator \
-    ./cmd/migrator/main.go
+    ./internal/postgres/migrator.go
 
 FROM scratch
 

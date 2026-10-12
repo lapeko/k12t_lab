@@ -10,7 +10,7 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
-//go:embed ../../internal/postgres/migrations/*.sql
+//go:embed migrations/*.sql
 var migrationsFS embed.FS
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
 		log.Fatalf("failed to set dialect: %v", err)
 	}
 
-	if err := goose.Up(db, "../../internal/postgres/migrations"); err != nil {
+	if err := goose.Up(db, "migrations"); err != nil {
 		log.Fatalf("migration failed: %v", err)
 	}
 
