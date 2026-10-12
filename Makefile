@@ -1,4 +1,4 @@
-.PHONY: all recreate-clusters show-argo-connections recreate-sealed-secrets
+.PHONY: all recreate-clusters show-argo-connections recreate-sealed-secrets run-root-apps
 
 all:
 	make recreate-clusters
@@ -46,3 +46,9 @@ recreate-sealed-secrets:
 	git add .
 	git commit -m "refresh sealed secrets [skip ci]"
 	git push
+
+run-root-apps:
+	kubectx kind-dev
+	kubectl apply -f ./argocd/apps/dev-root-app.yaml
+	kubectx kind-prod
+	kubectl apply -f ./argocd/apps/prod-root-app.yaml

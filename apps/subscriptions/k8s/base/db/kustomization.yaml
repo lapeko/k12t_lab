@@ -1,6 +1,7 @@
 resources:
+  - job.yaml
+  - sealed-secret.yaml
   - sts.yaml
   - svc.yaml
-  - sealed-secret.yaml
 commonAnnotations:
   argocd.argoproj.io/hook: PreSync
