@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriptions
+spec:
+  template:
+    spec:
+      containers:
+        - name: subscriptions
+          image: lapeko/subscriptions:0.0.1
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: stage-db-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stage-db-secret
+                  key: password
+            - name: DATABASE_URL
+              value: "postgres://$(DB_USER):$(DB_PASSWORD)@stage-postgres:5432/subscriptions?sslmode=disable"
