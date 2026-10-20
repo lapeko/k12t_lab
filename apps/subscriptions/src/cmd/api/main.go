@@ -1,13 +1,30 @@
 package main
 
 import (
+	"database/sql"
 	"log"
+	"os"
 
-	"github.com/lapeko/k12t_lab/apps/subscriptions/src/api"
+	_ "github.com/lib/pq"
+
+	"github.com/lapeko/k12t_lab/apps/subscriptions/src/internal/api"
 )
 
 func main() {
-	a := api.New()
-	a.Setup()
-	log.Fatalf("%e\n", a.Listen())
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		log.Fatal("DATABASE_URL is empty")
+	}
+
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatalf("failed to open db connection: %v", err)
+	}
+	defer db.Close()
+
+	if err := db.Ping(); err != nil {
+		log.Fatalf("failed to ping db: %v", err)
+	}
+
+	log.Fatalf("%e\n", api.New(db).Listen())
 }

@@ -6,14 +6,12 @@ import (
 	"testing"
 )
 
-func TestSetup_RootEndpoint(t *testing.T) {
-	a := New().(*api)
-	a.Setup()
+func TestRootEndpoint(t *testing.T) {
+	s := New(nil)
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rr := httptest.NewRecorder()
-
-	a.r.ServeHTTP(rr, req)
+	s.Router().ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusOK {
 		t.Errorf("expected status %d, got %d", http.StatusOK, rr.Code)
