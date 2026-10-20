@@ -40,7 +40,7 @@ func New(db *sql.DB) *Server {
 
 func (s *Server) Listen() error {
 	port := "3000"
-	s.logger.Info("Server runs on port %s\n", port)
+	s.logger.Info("Server runs on port", port)
 	return http.ListenAndServe(fmt.Sprintf(":%s", port), s.router)
 }
 
