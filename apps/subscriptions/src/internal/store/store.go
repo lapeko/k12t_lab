@@ -3,6 +3,8 @@ package store
 import (
 	"database/sql"
 	"errors"
+
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -11,11 +13,12 @@ var (
 )
 
 type Store struct {
-	db *sql.DB
+	db     *sql.DB
+	logger *logrus.Entry
 }
 
-func New(db *sql.DB) *Store {
-	return &Store{db: db}
+func New(db *sql.DB, log *logrus.Logger) *Store {
+	return &Store{db: db, logger: log.WithField("component", "store")}
 }
 
 func uniqueIDs(ids []int64) []int64 {

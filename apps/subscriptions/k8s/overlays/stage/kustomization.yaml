@@ -1,11 +1,18 @@
 resources:
-- ../../base
+  - ../../base
 components:
-- db/
+  - app/
+  - db/
 namespace: stage-subscriptions
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
+<<<<<<< Updated upstream
 - name: lapeko/subscriptions
   newName: lapeko/subscriptions
   newTag: sha-e1d3f94
+=======
+  - name: lapeko/subscriptions
+    newName: lapeko/subscriptions
+    newTag: sha-b7ed882
+>>>>>>> Stashed changes

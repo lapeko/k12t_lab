@@ -6,19 +6,24 @@ import (
 	"net/http"
 
 	"github.com/lapeko/k12t_lab/apps/subscriptions/src/internal/model"
+	"github.com/sirupsen/logrus"
 )
 
 type AuthorStore interface {
 	ListAuthors(ctx context.Context) ([]model.Author, error)
-	CreateAuthor(ctx context.Context, name string) (model.Author, error)
+	CreateAuthors(ctx context.Context, names []string) ([]model.Author, error)
 }
 
 type Authors struct {
-	store AuthorStore
+	store  AuthorStore
+	logger *logrus.Entry
 }
 
-func NewAuthors(store AuthorStore) *Authors {
-	return &Authors{store: store}
+func NewAuthors(store AuthorStore, logger *logrus.Logger) *Authors {
+	return &Authors{
+		store:  store,
+		logger: logger.WithField("component", "authors_handler"),
+	}
 }
 
 func (h *Authors) List(w http.ResponseWriter, r *http.Request) {
@@ -32,21 +37,25 @@ func (h *Authors) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Authors) Create(w http.ResponseWriter, r *http.Request) {
-	var req model.Author
+	var req model.CreateAuthorsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid json")
 		return
 	}
-	if req.Name == "" {
-		writeError(w, http.StatusBadRequest, "name is required")
-		return
+	var names []string
+	for _, name := range req.Names {
+		if name == "" {
+			h.logger.Errorf("create author error: property \"name\" shouldn't be empty\n")
+		} else {
+			names = append(names, name)
+		}
 	}
 
-	author, err := h.store.CreateAuthor(r.Context(), req.Name)
+	authors, err := h.store.CreateAuthors(r.Context(), names)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "failed to create author")
+		writeError(w, http.StatusInternalServerError, "failed to create authors")
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, author)
+	writeJSON(w, http.StatusCreated, authors)
 }

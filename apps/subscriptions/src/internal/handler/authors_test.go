@@ -1,14 +1,20 @@
 package handler
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/sirupsen/logrus"
 )
 
 func TestAuthorsCreate_RequiresName(t *testing.T) {
-	h := NewAuthors(nil)
+	log := logrus.New()
+	log.SetOutput(io.Discard)
+
+	h := NewAuthors(nil, log)
 
 	req := httptest.NewRequest(http.MethodPost, "/authors", strings.NewReader(`{"name":""}`))
 	rr := httptest.NewRecorder()
