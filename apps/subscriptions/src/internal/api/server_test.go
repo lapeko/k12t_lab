@@ -22,3 +22,20 @@ func TestRootEndpoint(t *testing.T) {
 		t.Errorf("expected body %q, got %q", expectedBody, rr.Body.String())
 	}
 }
+
+func TestHealthEndpoint(t *testing.T) {
+	s := New(nil)
+
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+	rr := httptest.NewRecorder()
+	s.Router().ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Errorf("expected status %d, got %d", http.StatusOK, rr.Code)
+	}
+
+	expectedBody := `{"status":"ok"}` + "\n"
+	if rr.Body.String() != expectedBody {
+		t.Errorf("expected body %q, got %q", expectedBody, rr.Body.String())
+	}
+}

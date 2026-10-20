@@ -9,9 +9,7 @@ import (
 )
 
 func (s *Server) registerRoutes(authors *handler.Authors, books *handler.Books) {
-	s.router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World 123456"))
-	})
+	s.router.Get("/health", handler.Health)
 
 	s.router.Route("/authors", func(r chi.Router) {
 		r.Get("/", authors.List)
