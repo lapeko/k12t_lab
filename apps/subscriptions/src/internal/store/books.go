@@ -28,7 +28,7 @@ func (s *Store) ListBooks(ctx context.Context) ([]model.BookResponse, error) {
 	}
 	defer rows.Close()
 
-	var books []model.BookResponse
+	books := []model.BookResponse{}
 	for rows.Next() {
 		var book model.BookResponse
 		var authors pq.StringArray
