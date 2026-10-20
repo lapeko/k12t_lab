@@ -10,6 +10,11 @@ import (
 	"github.com/lapeko/k12t_lab/apps/subscriptions/src/internal/model"
 )
 
+type Book interface {
+	ListBooks(ctx context.Context) ([]model.BookResponse, error)
+	CreateBook(ctx context.Context, title string, authorIDs []int64) (model.BookResponse, error)
+}
+
 func (s *Store) ListBooks(ctx context.Context) ([]model.BookResponse, error) {
 	s.logger.Debug("fetching all books from database")
 
@@ -55,48 +60,64 @@ func (s *Store) ListBooks(ctx context.Context) ([]model.BookResponse, error) {
 	return books, nil
 }
 
-func (s *Store) CreateBook(ctx context.Context, title string, authorIDs []int64) (model.Book, error) {
+func (s *Store) CreateBook(ctx context.Context, title string, authorIDs []int64) (model.BookResponse, error) {
 	s.logger.WithFields(logrus.Fields{
 		"title":      title,
 		"author_ids": authorIDs,
 	}).Debug("checking authors existence")
 
-	var authorsCount int
-	err := s.db.QueryRowContext(
+	rows, err := s.db.QueryContext(
 		ctx,
-		`SELECT COUNT(*) FROM authors WHERE id = ANY($1)`,
+		`SELECT name FROM authors WHERE id = ANY($1)`,
 		pq.Array(authorIDs),
-	).Scan(&authorsCount)
+	)
 	if err != nil {
-		s.logger.WithError(err).Error("failed to check authors existence")
-		return model.Book{}, err
+		s.logger.WithError(err).Error("failed to fetch authors for book")
+		return model.BookResponse{}, err
+	}
+	defer rows.Close()
+
+	var authorNames []string
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			s.logger.WithError(err).Error("failed to scan author name")
+			return model.BookResponse{}, err
+		}
+		authorNames = append(authorNames, name)
 	}
 
-	if authorsCount != len(uniqueIDs(authorIDs)) {
+	if len(authorNames) != len(uniqueIDs(authorIDs)) {
 		s.logger.Warn("one or more authors do not exist in database")
-		return model.Book{}, ErrAuthorsMissing
+		return model.BookResponse{}, ErrAuthorsMissing
 	}
 
-	book := model.Book{Title: title, AuthorIDs: authorIDs}
-	s.logger.WithField("title", book.Title).Debug("inserting new book into database")
+	var bookID int64
+	s.logger.WithField("title", title).Debug("inserting new book into database")
 
 	err = s.db.QueryRowContext(
 		ctx,
 		`INSERT INTO books (title, author_ids) VALUES ($1, $2) RETURNING id`,
-		book.Title,
-		pq.Array(book.AuthorIDs),
-	).Scan(&book.ID)
+		title,
+		pq.Array(authorIDs),
+	).Scan(&bookID)
 
 	if err != nil {
 		var pqErr *pq.Error
 		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
 			s.logger.WithError(err).Warn("attempt to create a duplicate book")
-			return model.Book{}, ErrDuplicate
+			return model.BookResponse{}, ErrDuplicate
 		}
 		s.logger.WithError(err).Error("failed to insert book")
-		return model.Book{}, err
+		return model.BookResponse{}, err
 	}
 
-	s.logger.WithField("book_id", book.ID).Info("book successfully created")
-	return book, nil
+	response := model.BookResponse{
+		ID:      bookID,
+		Title:   title,
+		Authors: authorNames,
+	}
+
+	s.logger.WithField("book_id", bookID).Info("book successfully created")
+	return response, nil
 }

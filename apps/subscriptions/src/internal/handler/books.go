@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -11,17 +10,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type BookStore interface {
-	ListBooks(ctx context.Context) ([]model.BookResponse, error)
-	CreateBook(ctx context.Context, title string, authorIDs []int64) (model.BookResponse, error)
-}
-
 type Books struct {
-	store  BookStore
+	store  store.Book
 	logger *logrus.Entry
 }
 
-func NewBooks(store BookStore, log *logrus.Logger) *Books {
+func NewBooks(store store.Book, log *logrus.Logger) *Books {
 	return &Books{
 		store:  store,
 		logger: log.WithField("component", "books_handler"),

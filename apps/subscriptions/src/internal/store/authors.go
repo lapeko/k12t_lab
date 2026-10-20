@@ -7,6 +7,11 @@ import (
 	"github.com/lib/pq"
 )
 
+type Author interface {
+	ListAuthors(ctx context.Context) ([]model.Author, error)
+	CreateAuthors(ctx context.Context, names []string) ([]model.Author, error)
+}
+
 func (s *Store) ListAuthors(ctx context.Context) ([]model.Author, error) {
 	s.logger.Debug("query authors")
 	rows, err := s.db.QueryContext(ctx, `SELECT id, name FROM authors ORDER BY id`)

@@ -1,25 +1,20 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
 	"github.com/lapeko/k12t_lab/apps/subscriptions/src/internal/model"
+	"github.com/lapeko/k12t_lab/apps/subscriptions/src/internal/store"
 	"github.com/sirupsen/logrus"
 )
 
-type AuthorStore interface {
-	ListAuthors(ctx context.Context) ([]model.Author, error)
-	CreateAuthors(ctx context.Context, names []string) ([]model.Author, error)
-}
-
 type Authors struct {
-	store  AuthorStore
+	store  store.Author
 	logger *logrus.Entry
 }
 
-func NewAuthors(store AuthorStore, logger *logrus.Logger) *Authors {
+func NewAuthors(store store.Author, logger *logrus.Logger) *Authors {
 	return &Authors{
 		store:  store,
 		logger: logger.WithField("component", "authors_handler"),

@@ -15,6 +15,8 @@ var (
 type Store struct {
 	db     *sql.DB
 	logger *logrus.Entry
+	Book
+	Author
 }
 
 func New(db *sql.DB, log *logrus.Logger) *Store {
