@@ -11,7 +11,7 @@ import (
 )
 
 type BookStore interface {
-	ListBooks(ctx context.Context) ([]model.Book, error)
+	ListBooks(ctx context.Context) ([]model.BookResponse, error)
 	CreateBook(ctx context.Context, title string, authorIDs []int64) (model.Book, error)
 }
 
