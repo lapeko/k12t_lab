@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/go-chi/chi/v5"
 
 	"github.com/lapeko/k12t_lab/apps/subscriptions/src/internal/handler"
