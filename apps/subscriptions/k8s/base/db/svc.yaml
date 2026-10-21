@@ -4,6 +4,8 @@ metadata:
   name: postgres
   labels:
     app: postgres
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
 spec:
   selector:
     app: postgres
