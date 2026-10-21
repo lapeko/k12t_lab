@@ -25,6 +25,5 @@ func main() {
 	if err := db.Ping(); err != nil {
 		log.Fatalf("failed to ping db: %v", err)
 	}
-
 	log.Fatalf("%e\n", api.New(db).Listen())
 }
