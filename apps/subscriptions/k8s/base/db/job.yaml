@@ -13,15 +13,7 @@ spec:
         - name: migrator
           image: lapeko/subscriptions:0.0.1
           command:
-            - sh
-            - -c
-            - |
-              echo "Waiting for postgres..."
-              until pg_isready -h postgres -p 5432 -U postgres; do
-                sleep 2
-              done
-              echo "Postgres is up, running migrations..."
-              /app/migrator
+            - /app/migrator
           env:
             - name: DB_USER
               valueFrom:
