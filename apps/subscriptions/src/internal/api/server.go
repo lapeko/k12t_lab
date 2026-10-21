@@ -26,11 +26,13 @@ func New(db *sql.DB) *Server {
 	} else {
 		log = logger.New(env)
 	}
+	log.Info("Create store")
 	st := store.New(db, log)
 	s := &Server{
 		router: chi.NewRouter(),
 		logger: log,
 	}
+	log.Info("Register routes")
 	s.registerRoutes(
 		handler.NewAuthors(st, log),
 		handler.NewBooks(st, log),
